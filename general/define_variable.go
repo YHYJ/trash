@@ -12,6 +12,7 @@ package general
 import (
 	"os"
 	"os/user"
+	"path/filepath"
 	"runtime"
 	"strconv"
 )
@@ -59,6 +60,9 @@ var (
 	ErrorPrefixFormat = "%s%s\x1b[31m%s\x1b[0m\n" // 错误信息输出格式 带前缀的错误: <前缀><分隔符><错误信息>
 	ErrorSuffixFormat = "\x1b[31m%s\x1b[0m%s%s\n" // 错误信息输出格式 带后缀的错误: <错误信息><分隔符><后缀>
 )
+
+var RecycleBinFilesPath = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash/files") // 回收站已删除文件存储路径
+var RecycleBinInfoPath = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash/info")   // 回收站已删除文件信息存储文件的路径
 
 // ---------- 环境变量
 
