@@ -17,11 +17,11 @@ import (
 	"github.com/yhyj/trash/general"
 )
 
-// PutFile 将文件移动到回收站
+// PutFiles 将文件移动到回收站
 //
 // 参数：
 //   - files: 需要移动的文件列表
-func PutFile(files []string) {
+func PutFiles(files []string) {
 	for _, file := range files {
 		if general.FileExist(file) {
 			absPath := general.GetAbsPath(file)                                      // 待删除文件的绝对路径
@@ -64,8 +64,8 @@ func trashinfoCreator(fileName, originalPath string) {
 	}
 
 	// 写入已删除文件信息
-	format := "2006-01-02T15:04:05"
-	if err := general.WriteFile(trashinfoFilePath, fmt.Sprintf(general.TrashinfoFileContent, originalPath, general.GetDateTime(format))); err != nil {
+	trashinfoFileContent := fmt.Sprintf(general.TrashinfoFileContent, originalPath, general.GetDateTime(general.TrashinfoTimeFormat))
+	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent); err != nil {
 		fmt.Printf(general.ErrorSuffixFormat, "Error writing trashinfo file", ": ", err)
 	}
 }
