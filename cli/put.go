@@ -2,7 +2,7 @@
 File: put.go
 Author: YJ
 Email: yj1516268@outlook.com
-Created Time: 2023-11-30 09:44:01
+Created Time: 2023-11-26 09:44:01
 
 Description: 子命令`put`的实现
 */
@@ -50,13 +50,13 @@ func PutFiles(files []string) {
 	}
 }
 
-// trashinfoCreator 创建已删除文件信息存储文件
+// trashinfoCreator 创建已删除文件的 trashinfo 文件
 //
 // 参数：
-//   - fileName: 信息存储文件的文件名（不包含后缀名）
+//   - fileName: trashinfo 文件的文件名（不包含后缀名）
 //   - originalPath: 已删除文件的原绝对路径
 func trashinfoCreator(fileName, originalPath string) {
-	// 创建已删除文件信息存储文件
+	// 创建已删除文件的 trashinfo 文件
 	trashinfoFilePath := filepath.Join(general.TrashinfoFilePath, fmt.Sprintf("%s.trashinfo", filepath.Base(fileName)))
 	if err := general.CreateFile(trashinfoFilePath); err != nil {
 		fmt.Printf(general.ErrorSuffixFormat, "Error creating trashinfo file", ": ", err)
