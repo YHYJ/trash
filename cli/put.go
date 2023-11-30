@@ -28,7 +28,7 @@ func PutFile(files []string) {
 			trashedFileName := filepath.Base(file)                                   // 回收站文件名
 			trashedFilePath := filepath.Join(general.TrashFilePath, trashedFileName) // 回收站文件的路径
 
-			// 检测 trashPath 是否已存在，存在则为 trashPath 增加一个累加的后缀
+			// 检测回收站中 trashPath 是否已存在，存在则为 trashPath 增加一个累加的后缀
 			for num := 1; ; num++ {
 				if !general.FileExist(trashedFilePath) {
 					break
@@ -36,6 +36,7 @@ func PutFile(files []string) {
 				trashedFileName = fmt.Sprintf("%s_%d", filepath.Base(file), num)
 				trashedFilePath = filepath.Join(general.TrashFilePath, trashedFileName)
 			}
+
 			// 将文件移动到回收站
 			err := os.Rename(file, trashedFilePath)
 			if err != nil {
