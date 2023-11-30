@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-30 09:44:01
 
-Description:
+Description: 子命令`put`的实现
 */
 
 package cli
@@ -40,7 +40,7 @@ func PutFile(files []string) {
 			// 将文件移动到回收站
 			err := os.Rename(file, trashedFilePath)
 			if err != nil {
-				fmt.Println("Error moving to trash:", err)
+				fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
 			} else {
 				trashinfoCreator(trashedFileName, absPath)
 			}
@@ -58,9 +58,14 @@ func PutFile(files []string) {
 func trashinfoCreator(fileName, originalPath string) {
 	// 创建已删除文件信息存储文件
 	trashinfoFilePath := filepath.Join(general.TrashinfoFilePath, fmt.Sprintf("%s.trashinfo", filepath.Base(fileName)))
-	general.CreateFile(trashinfoFilePath)
+	if err := general.CreateFile(trashinfoFilePath); err != nil {
+		fmt.Printf(general.ErrorSuffixFormat, "Error creating trashinfo file", ": ", err)
+		return
+	}
 
 	// 写入已删除文件信息
 	format := "2006-01-02T15:04:05"
-	general.WriteFile(trashinfoFilePath, fmt.Sprintf(general.TrashinfoFileContent, originalPath, general.GetDateTime(format)))
+	if err := general.WriteFile(trashinfoFilePath, fmt.Sprintf(general.TrashinfoFileContent, originalPath, general.GetDateTime(format))); err != nil {
+		fmt.Printf(general.ErrorSuffixFormat, "Error writing trashinfo file", ": ", err)
+	}
 }

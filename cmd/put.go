@@ -20,7 +20,8 @@ var putCmd = &cobra.Command{
 	Short: "Put files into the recycle bin",
 	Long:  `Put files into the recycle bin instead of deleting them completely.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.PutFile(args)
+		cli.CheckRecycleBin() // 检查回收站是否存在
+		cli.PutFile(args)     // 将文件放入回收站
 	},
 }
 

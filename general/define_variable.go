@@ -61,9 +61,10 @@ var (
 	ErrorSuffixFormat = "\x1b[31m%s\x1b[0m%s%s\n" // 错误信息输出格式 带后缀的错误: <错误信息><分隔符><后缀>
 )
 
-var TrashFilePath = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash/files")    // 回收站文件存储路径
-var TrashinfoFilePath = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash/info") // 已删除文件的信息存储文件路径
-var TrashinfoFileContent = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"               // 已删除文件的信息存储文件内容
+var TrashPath = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
+var TrashFilePath = filepath.Join(TrashPath, "files")                  // 回收站文件存储路径
+var TrashinfoFilePath = filepath.Join(TrashPath, "info")               // 已删除文件的信息存储文件路径
+var TrashinfoFileContent = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"  // 已删除文件的信息存储文件内容
 
 // ---------- 环境变量
 
