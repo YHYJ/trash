@@ -1,5 +1,5 @@
 /*
-File: pacnew.go
+File: restore.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 11:05:39
@@ -26,6 +26,6 @@ var restoreCmd = &cobra.Command{
 }
 
 func init() {
-	restoreCmd.Flags().BoolP("help", "h", false, "help for list command")
+	restoreCmd.Flags().BoolP("help", "h", false, "help for restore command")
 	rootCmd.AddCommand(restoreCmd)
 }
