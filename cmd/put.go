@@ -10,9 +10,8 @@ Description: 程序子命令'put'时执行
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/yhyj/trash/cli"
 )
 
 // putCmd represents the put command
@@ -21,7 +20,7 @@ var putCmd = &cobra.Command{
 	Short: "Put files into the recycle bin",
 	Long:  `Put files into the recycle bin instead of deleting them completely.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("put called")
+		cli.PutFile(args)
 	},
 }
 
