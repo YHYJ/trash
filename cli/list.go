@@ -48,6 +48,10 @@ func ListFiles() {
 		sort.SliceStable(fileEntries, func(i, j int) bool {
 			return fileEntries[i].Time.Before(fileEntries[j].Time)
 		})
+		// 更新排序后的 Index
+		for i := range fileEntries {
+			fileEntries[i].Index = i
+		}
 	}
 
 	for _, entry := range fileEntries {
