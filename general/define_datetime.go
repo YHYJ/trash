@@ -32,20 +32,15 @@ func GetDateTime(format string) string {
 //   - datetimeStr: 待解析的日期时间字符串
 //
 // 返回：
-//   - 解析后的日期字符串
-//   - 解析后的时间字符串
+//   - time.Parse 解析结果
 //   - 错误信息
-func ParseDateTime(format, datetimeStr string) (string, string, error) {
+func ParseDateTime(format, datetimeStr string) (time.Time, error) {
 	// 解析时间字符串
 	parsedTime, err := time.Parse(format, datetimeStr)
 	if err != nil {
 		fmt.Println("解析时间错误:", err)
-		return "", "", err
+		return time.Time{}, err
 	}
 
-	// 格式化日期和时间部分
-	datePart := parsedTime.Format("2006-01-02")
-	timePart := parsedTime.Format("15:04:05")
-
-	return datePart, timePart, nil
+	return parsedTime, nil
 }
