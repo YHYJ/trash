@@ -18,21 +18,17 @@ import (
 )
 
 func ListFiles() {
-	files, err := filepath.Glob(filepath.Join(general.TrashFilePath, "*"))
+	// 获取所有 trashinfo 文件的绝对路径
+	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashinfoFilePath, "*"))
 	if err != nil {
-		fmt.Printf(general.ErrorSuffixFormat, "Error listing trash", ": ", err)
+		fmt.Printf(general.ErrorSuffixFormat, "Error listing trashinfo file", ": ", err)
 		return
 	}
 
-	for _, file := range files {
-		// 获取基础文件名
-		fileName := filepath.Base(file)
-		// 获取对应的 trashinfo 文件路径
-		trashinfoFilePath := filepath.Join(general.TrashinfoFilePath, fmt.Sprintf("%s.trashinfo", fileName))
-
-		if general.FileExist(trashinfoFilePath) {
-			originalFilePath := strings.Split(general.ReadFileKey(trashinfoFilePath, "Path"), "=")[1]
-			trashedDateTime := strings.Split(general.ReadFileKey(trashinfoFilePath, "DeletionDate"), "=")[1]
+	for _, trashinfoFile := range trashinfoFiles {
+		if general.FileExist(trashinfoFile) {
+			originalFilePath := strings.Split(general.ReadFileKey(trashinfoFile, "Path"), "=")[1]
+			trashedDateTime := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]
 			trashedDate, trashedTime, err := general.ParseDateTime(general.TrashinfoTimeFormat, trashedDateTime)
 			if err != nil {
 				fmt.Printf(general.ErrorSuffixFormat, "Error parsing trashinfo file", ": ", err)
