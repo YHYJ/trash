@@ -38,9 +38,9 @@ func ListFiles() {
 		}
 
 		entry := FileEntry{
-			Time:  parsedDeletionDate,
-			Path:  originalFilePath,
-			Index: index,
+			Index:        index,
+			Time:         parsedDeletionDate,
+			OriginalPath: originalFilePath,
 		}
 		fileEntries = append(fileEntries, entry)
 
@@ -55,6 +55,6 @@ func ListFiles() {
 	}
 
 	for _, entry := range fileEntries {
-		fmt.Printf("%s %s %s\n", entry.Time.Format("2006-01-02"), entry.Time.Format("15:04:05"), entry.Path)
+		fmt.Printf("%s %s %s\n", entry.Time.Format("2006-01-02"), entry.Time.Format("15:04:05"), entry.OriginalPath)
 	}
 }

@@ -18,9 +18,10 @@ import (
 
 // FileEntry 存储回收站文件信息
 type FileEntry struct {
-	Index int       // 文件索引
-	Time  time.Time // 文件删除时间
-	Path  string    // 文件原绝对路径
+	Index        int       // 文件索引
+	Time         time.Time // 文件删除时间
+	OriginalPath string    // 文件原绝对路径（即删除前的路径）
+	Path         string    // 文件绝对路径（即删除后的路径）
 }
 
 // CheckRecycleBin 检查回收站是否存在
