@@ -19,7 +19,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "trash",
 	Short: "File recycle bin",
-	Long:  `trash is a tool to put file in recycle bin.`,
+	Long:  `trash is a tool to put files into the recycle bin.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

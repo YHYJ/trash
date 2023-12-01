@@ -17,8 +17,8 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List files in the file recycle bin",
-	Long:  `List all files in the file recycle bin.`,
+	Short: "List files in the recycle bin",
+	Long:  `List all files in the recycle bin.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cli.CheckRecycleBin() // 检查回收站是否存在
 		cli.ListFiles()       // 列出回收站中的文件
