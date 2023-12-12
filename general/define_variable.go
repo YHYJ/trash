@@ -50,7 +50,7 @@ var (
 	Tips2PSuffixNoNewLineFormat = "\x1b[32;1m%s\x1b[0m%s\x1b[36;1m%s\x1b[0m%s%s" // 提示信息输出格式 带后缀的提示信息·2部分·不换行: <提示信息1><分隔符><提示信息2><分隔符><后缀>
 
 	InfoFormat             = "\x1b[33;1m%s\x1b[0m\n"                        // 展示信息输出格式 展示信息: <展示信息>
-	Info2PFormat           = "\x1b[33;1m%s%s\x1b[0m\n"                      // 展示信息输出格式 展示信息·2部分: <展示信息>
+	Info2PFormat           = "\x1b[33;1m%s%s\x1b[0m\n"                      // 展示信息输出格式 展示信息·2部分: <展示信息><展示信息>
 	InfoPrefixFormat       = "%s%s\x1b[33;1m%s\x1b[0m\n"                    // 展示信息输出格式 带前缀的展示信息: <前缀><分隔符><展示信息>
 	Info2PPrefixFormat     = "%s%s\x1b[33;1m%s\x1b[0m%s\x1b[35m%s\x1b[0m\n" // 展示信息输出格式 带前缀的展示信息·2部分: <前缀><分隔符><展示信息1><分隔符><展示信息2>
 	InfoSuffixFormat       = "\x1b[33;1m%s\x1b[0m%s%s\n"                    // 展示信息输出格式 带后缀的展示信息: <展示信息><分隔符><后缀>
