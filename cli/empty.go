@@ -30,4 +30,10 @@ func EmptyTrash() {
 		os.RemoveAll(trashFile)     // 删除回收站中的文件
 		os.RemoveAll(trashinfoFile) // 删除 trashinfo 文件
 	}
+
+	// 删除 directorysizes 文件
+	directorysizesFile := filepath.Join(general.TrashPath, "directorysizes")
+	if general.FileExist(directorysizesFile) {
+		os.RemoveAll(directorysizesFile)
+	}
 }
