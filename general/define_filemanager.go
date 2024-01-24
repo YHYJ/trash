@@ -32,13 +32,13 @@ func GetFsID(file string) (uint64, error) {
 	// 获取文件信息
 	fileInfo, err := os.Stat(file)
 	if err != nil {
-		return 0, err
+		return uint64(0), err
 	}
 
 	// 获取文件所在文件系统的设备 ID
 	id := fileInfo.Sys().(*syscall.Stat_t).Dev
 
-	return id, nil
+	return uint64(id), nil
 }
 
 // ReadFileLine 读取文件指定行
