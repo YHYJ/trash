@@ -63,6 +63,7 @@ var (
 
 var (
 	TrashPath               = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
+	CrossTrashPath          = ".Trash-1000"                                          // 跨文件系统回收站路径
 	TrashFilesPath          = filepath.Join(TrashPath, "files")                      // 回收站文件存储路径
 	TrashInfoPath           = filepath.Join(TrashPath, "info")                       // 已删除文件的 trashinfo 文件路径
 	TrashInfoFileContent    = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"             // 已删除文件的 trashinfo 文件内容

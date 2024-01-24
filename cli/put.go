@@ -71,8 +71,8 @@ func PutFiles(files []string) {
 						// 更新根路径为父目录路径，继续向上查找
 						deviceRoot = parent
 					}
-					trashFlePath := filepath.Join(deviceRoot, ".Trash-1000", "files")
-					trashinfoFlePath := filepath.Join(deviceRoot, ".Trash-1000", "info")
+					trashFlePath := filepath.Join(deviceRoot, general.CrossTrashPath, "files")
+					trashinfoFlePath := filepath.Join(deviceRoot, general.CrossTrashPath, "info")
 					err := general.CreateDir(trashFlePath)
 					if err != nil {
 						fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
