@@ -18,7 +18,28 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 )
+
+// GetFsID 获取文件所在文件系统的 ID
+//
+// 参数：
+//   - file: 文件路径
+//
+// 返回：
+//   - 文件系统 ID。如果 ID = 0，表示获取文件系统 ID 失败
+func GetFsID(file string) (uint64, error) {
+	// 获取文件信息
+	fileInfo, err := os.Stat(file)
+	if err != nil {
+		return 0, err
+	}
+
+	// 获取文件所在文件系统的设备 ID
+	id := fileInfo.Sys().(*syscall.Stat_t).Dev
+
+	return id, nil
+}
 
 // ReadFileLine 读取文件指定行
 //

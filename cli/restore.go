@@ -23,7 +23,7 @@ import (
 // RestoreFromTrash 恢复回收站中的文件
 func RestoreFromTrash() {
 	// 获取所有 trashinfo 文件的绝对路径
-	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashinfoFilePath, "*"))
+	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
 		fmt.Printf(general.ErrorSuffixFormat, "Error listing trashinfo file", ": ", err)
 		return
@@ -32,9 +32,9 @@ func RestoreFromTrash() {
 	// 将数据解析为 FileEntry 类型
 	var fileEntries []FileEntry
 	for index, trashinfoFile := range trashinfoFiles {
-		originalFilePath := strings.Split(general.ReadFileKey(trashinfoFile, "Path"), "=")[1]       // 文件的原绝对路径
-		deletionDate := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]   // 文件的删除日期时间（未解析）
-		parsedDeletionDate, err := general.ParseDateTime(general.TrashinfoTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
+		originalFilePath := strings.Split(general.ReadFileKey(trashinfoFile, "Path"), "=")[1]           // 文件的原绝对路径
+		deletionDate := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]       // 文件的删除日期时间（未解析）
+		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
 			fmt.Printf(general.ErrorSuffixFormat, "Error parsing trashinfo file", ": ", err)
 			break
@@ -44,7 +44,7 @@ func RestoreFromTrash() {
 			Index:        index,
 			Time:         parsedDeletionDate,
 			OriginalPath: originalFilePath,
-			Path:         filepath.Join(general.TrashFilePath, strings.TrimSuffix(filepath.Base(trashinfoFile), filepath.Ext(trashinfoFile))),
+			Path:         filepath.Join(general.TrashFilesPath, strings.TrimSuffix(filepath.Base(trashinfoFile), filepath.Ext(trashinfoFile))),
 		}
 		fileEntries = append(fileEntries, entry)
 
@@ -127,7 +127,7 @@ func RestoreFromTrash() {
 				fmt.Printf(general.ErrorSuffixFormat, "Error restoring files", ": ", err)
 			}
 			// 删除其对应的 trashinfo 文件
-			general.DeleteFile(filepath.Join(general.TrashinfoFilePath, fmt.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
+			general.DeleteFile(filepath.Join(general.TrashInfoPath, fmt.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
 		}
 	} else {
 		fmt.Printf(general.RegelarFormat, "No files in trash")

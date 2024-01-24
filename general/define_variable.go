@@ -62,11 +62,11 @@ var (
 )
 
 var (
-	TrashPath            = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
-	TrashFilePath        = filepath.Join(TrashPath, "files")                      // 回收站文件存储路径
-	TrashinfoFilePath    = filepath.Join(TrashPath, "info")                       // 已删除文件的 trashinfo 文件路径
-	TrashinfoFileContent = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"             // 已删除文件的 trashinfo 文件内容
-	TrashinfoTimeFormat  = "2006-01-02T15:04:05"                                  // 记录文件删除时间的字符串格式
+	TrashPath               = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
+	TrashFilesPath          = filepath.Join(TrashPath, "files")                      // 回收站文件存储路径
+	TrashInfoPath           = filepath.Join(TrashPath, "info")                       // 已删除文件的 trashinfo 文件路径
+	TrashInfoFileContent    = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"             // 已删除文件的 trashinfo 文件内容
+	TrashInfoFileTimeFormat = "2006-01-02T15:04:05"                                  // 记录文件删除时间的字符串格式
 )
 
 // ---------- 环境变量

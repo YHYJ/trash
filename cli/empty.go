@@ -19,14 +19,14 @@ import (
 
 // EmptyTrash 清空回收站
 func EmptyTrash() {
-	trashFilesName, err := os.ReadDir(general.TrashFilePath)
+	trashFilesName, err := os.ReadDir(general.TrashFilesPath)
 	if err != nil {
 		fmt.Printf(general.ErrorSuffixFormat, "Error reading trash folder", ": ", err)
 	}
 
 	for _, trashFileName := range trashFilesName {
-		trashFile := filepath.Join(general.TrashFilePath, trashFileName.Name())
-		trashinfoFile := filepath.Join(general.TrashinfoFilePath, fmt.Sprintf("%s.trashinfo", trashFileName.Name()))
+		trashFile := filepath.Join(general.TrashFilesPath, trashFileName.Name())
+		trashinfoFile := filepath.Join(general.TrashInfoPath, fmt.Sprintf("%s.trashinfo", trashFileName.Name()))
 		os.RemoveAll(trashFile)     // 删除回收站中的文件
 		os.RemoveAll(trashinfoFile) // 删除 trashinfo 文件
 	}
