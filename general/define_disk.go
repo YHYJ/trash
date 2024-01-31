@@ -1,5 +1,5 @@
 /*
-File: define_volumn.go
+File: define_disk.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2024-01-30 11:35:38
@@ -12,7 +12,44 @@ package general
 import (
 	"path/filepath"
 	"syscall"
+
+	"github.com/shirou/gopsutil/v3/disk"
 )
+
+// GetMountpoints 获取系统中的挂载点
+//
+//   - 包括 '/tmp'
+//
+// 返回：
+//   - 挂载点的字符串切片
+func GetMountpoints() ([]string, error) {
+	// 将物理设备的文件系统类型添加到预定义切片
+	physicalPartitions, err := disk.Partitions(false)
+	if err != nil {
+		return nil, err
+	}
+	for _, partition := range physicalPartitions {
+		fsTypes = append(fsTypes, partition.Fstype)
+	}
+
+	// 获取符合要求的挂载点，要求为：
+	// - partition.Device == "tmpfs" && partition.Mountpoint == "/tmp" && partition.Fstype == "tmpfs"
+	// - partition.Fstype 在 fsTypes 中
+	allPartitions, err := disk.Partitions(true)
+	if err != nil {
+		return nil, err
+	}
+	mountpoints := make([]string, 0)
+	for _, partition := range allPartitions {
+		if StringSliceEqual([]string{partition.Device, partition.Mountpoint, partition.Fstype}, []string{"tmpfs", "/tmp", "tmpfs"}) {
+			mountpoints = append(mountpoints, partition.Mountpoint)
+		}
+		if fsTypes.Have(partition.Fstype) {
+			mountpoints = append(mountpoints, partition.Mountpoint)
+		}
+	}
+	return mountpoints, nil
+}
 
 // IsMountPoint 测试路径是否为挂载点
 //
