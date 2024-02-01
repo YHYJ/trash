@@ -10,12 +10,30 @@ Description: 操作变量（包括代码变量和环境变量）
 package general
 
 import (
+	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
 	"runtime"
 	"strconv"
 )
+
+// ---------- 自定义数据类型
+
+type StringSlice []string
+
+// Have 检查 StringSlice 中是否存在指定的字符串
+func (s StringSlice) Have(target string) bool {
+	// 遍历切片中的每个元素
+	for _, item := range s {
+		// 如果找到目标字符串，则返回 true
+		if item == target {
+			return true
+		}
+	}
+	// 如果切片中不存在目标字符串，则返回 false
+	return false
+}
 
 // ---------- 代码变量
 
@@ -62,19 +80,36 @@ var (
 )
 
 var (
-	TrashPath               = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
-	CrossTrashPath          = ".Trash-1000"                                          // 跨文件系统回收站路径
-	TrashFilesPath          = filepath.Join(TrashPath, "files")                      // 回收站文件存储路径
-	TrashInfoPath           = filepath.Join(TrashPath, "info")                       // 已删除文件的 trashinfo 文件路径
-	TrashInfoFileContent    = "[Trash Info]\nPath=%s\nDeletionDate=%s\n"             // 已删除文件的 trashinfo 文件内容
-	TrashInfoFileTimeFormat = "2006-01-02T15:04:05"                                  // 记录文件删除时间的字符串格式
+	TrashPath       = filepath.Join(UserInfo.HomeDir, "/.local/share/Trash") // 回收站路径
+	TrashFilePath   = filepath.Join(TrashPath, "files")                      // 回收站文件存储路径
+	TrashInfoPath   = filepath.Join(TrashPath, "info")                       // 已删除文件的 trashinfo 文件路径
+	DeviceTrashPath = func() string {                                        // 可移动设备回收站名
+		otherTrash := filepath.Join(".Trash", UserID)
+		if FileExist(otherTrash) {
+			return otherTrash
+		}
+		return fmt.Sprintf(".Trash-%s", UserID)
+	}()
+	TrashInfoFileContent    = "[Trash Info]\nPath=%s\nDeletionDate=%s\n" // 已删除文件的 trashinfo 文件内容
+	TrashInfoFileTimeFormat = "2006-01-02T15:04:05"                      // 记录文件删除时间的字符串格式
 )
+
+var fsTypes = StringSlice{ // 在此切片中的文件系统类型视为物理设备（来自 https://github.com/andreafrancia/trash-cli）
+	"btrfs",
+	"fuse", // https://github.com/andreafrancia/trash-cli/issues/250
+	"fuse.glusterfs",
+	"fuse.mergerfs", // https://github.com/andreafrancia/trash-cli/issues/255
+	"nfs",
+	"nfs4",
+	"p9", // file system used in WSL 2 (Windows Subsystem for Linux)
+}
 
 // ---------- 环境变量
 
 var Platform = runtime.GOOS                   // 操作系统
 var Arch = runtime.GOARCH                     // 系统架构
 var UserInfo, _ = GetUserInfoByName(UserName) // 用户信息
+var UserID = UserInfo.Uid                     // 用户 ID
 // 用户名，当程序提权运行时，使用 SUDO_USER 变量获取提权前的用户名
 var UserName = func() string {
 	if GetVariable("SUDO_USER") != "" {

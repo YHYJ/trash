@@ -13,95 +13,95 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/yhyj/trash/general"
 )
 
 // PutFiles 将文件移动到回收站
 //
+//  1. [文件是否存在]                   -- 检测目标文件列表中的文件是否存在，存在的文件继续处理，不存在的文件报错文件不存在
+//  2. [文件和用户回收站是否在同一分区] -- 判断目标文件和用户回收站是否在同一分区，是则将文件移动到回收站，不是则继续
+//  3. [文件是否在可移动设备上]         -- 判断目标文件所在设备是否可移动，可移动则将文件移动到设备回收站，不可移动则报错跨文件系统操作
+//
 // 参数：
 //   - files: 需要移动的文件列表
 func PutFiles(files []string) {
 	for _, file := range files {
+		// 判断文件是否存在
 		if general.FileExist(file) {
 			// 待删除文件
-			absPath := general.GetAbsPath(file)   // 待删除文件的绝对路径
-			filename := filepath.Base(file)       // 待删除文件名（清除路径等因素，仅保留纯粹的文件名）
-			deviceRoot := file                    // 初始化文件系统根路径为文件路径
-			fsID, err := general.GetFsID(absPath) // 获取文件系统设备 ID
+			absPath := general.GetFileAbsPath(file)   // 待删除文件的绝对路径
+			filename := general.GetFilePureName(file) // 待删除文件名
+			// 回收站文件
+			fileNameInTrash := filename // 文件在回收站的名字
+
+			// 获取分区信息
+			partitionInfo, err := general.GetPartitionInfo()
 			if err != nil {
 				fmt.Printf(general.RegelarFormat, err)
 			}
-			// 回收站文件
-			trashedFileName := filename                                               // 回收站文件名
-			trashedFilePath := filepath.Join(general.TrashFilesPath, trashedFileName) // 回收站文件的路径
 
-			// 若回收站中存在待删除文件的同名文件则为待删除文件增加一个累加的数字后缀作为其在回收站中的文件名
-			for num := 1; ; num++ {
-				if !general.FileExist(trashedFilePath) {
-					break
+			// 判断文件和用户回收站是否在同一分区
+			if strings.HasPrefix(absPath, "/home") {
+				filePathInTrash := filepath.Join(general.TrashFilePath, fileNameInTrash) // 文件在回收站的路径
+				// 创建回收站
+				if err := general.CreateDir(general.TrashFilePath); err != nil {
+					fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
 				}
-				trashedFileName = fmt.Sprintf("%s_%d", filename, num)
-				trashedFilePath = filepath.Join(general.TrashFilesPath, trashedFileName)
-			}
-			// 将文件移动到回收站
-			err = os.Rename(file, trashedFilePath)
-			if err != nil {
-				// 跨文件系统移动文件时，重设回收站参数
-				if linkErr, ok := err.(*os.LinkError); ok && linkErr.Op == "rename" {
-					// 逐级向上查找文件系统的根路径
-					for {
-						// 获取父目录路径，如果父目录路径和当前路径相同，表示已到达根目录
-						parent := filepath.Dir(deviceRoot)
-						if parent == deviceRoot {
-							break
-						}
-
-						parentFsID, err := general.GetFsID(parent) // 获取父文件系统设备 ID
-						if err != nil {
-							fmt.Printf(general.RegelarFormat, err)
-							break
-						}
-
-						// 如果父目录所在文件系统的设备 ID 不同于原始文件的设备 ID，表示已经跨越文件系统边界
-						if parentFsID != fsID {
-							break
-						}
-
-						// 更新根路径为父目录路径，继续向上查找
-						deviceRoot = parent
+				// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
+				for num := 1; ; num++ {
+					if !general.FileExist(filePathInTrash) {
+						break
 					}
-					trashFlePath := filepath.Join(deviceRoot, general.CrossTrashPath, "files")
-					trashinfoFlePath := filepath.Join(deviceRoot, general.CrossTrashPath, "info")
-					err := general.CreateDir(trashFlePath)
-					if err != nil {
-						fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
-					}
-					trashedFilePath = filepath.Join(trashFlePath, trashedFileName)
-					// 检测回收站中 trashPath 是否已存在，存在则为 trashPath 增加一个累加的后缀
-					for num := 1; ; num++ {
-						if !general.FileExist(trashedFilePath) {
-							break
-						}
-						trashedFileName = fmt.Sprintf("%s_%d", filename, num)
-						trashedFilePath = filepath.Join(trashFlePath, trashedFileName)
-					}
-					// 将文件移动到回收站
-					err = os.Rename(file, trashedFilePath)
-					if err != nil {
-						fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
-					} else {
-						trashinfoCreator(trashinfoFlePath, trashedFileName, filename)
-					}
+					fileNameInTrash = fmt.Sprintf("%s_%d", filename, num)
+					filePathInTrash = filepath.Join(general.TrashFilePath, fileNameInTrash)
+				}
+				// 将文件移动到回收站
+				if err = os.Rename(file, filePathInTrash); err != nil {
+					fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
 				} else {
-					fmt.Printf(general.ErrorSuffixFormat, fmt.Sprintf("Cannot remove '%s'", file), ": ", err)
+					trashinfoCreator(general.TrashInfoPath, fileNameInTrash, absPath)
 				}
 			} else {
-				trashinfoCreator(general.TrashInfoPath, trashedFileName, absPath)
+				flag := false
+				for _, partition := range partitionInfo {
+					// 判断文件是否在可移动设备上
+					if partition.Removable && strings.HasPrefix(absPath, partition.Mount) {
+						// 构建设备回收站参数
+						trashFilePath := filepath.Join(partition.Mount, general.DeviceTrashPath, "files") // 回收站文件存储路径
+						trashinfoPath := filepath.Join(partition.Mount, general.DeviceTrashPath, "info")  // 已删除文件的 trashinfo 文件路径
+						filePathInTrash := filepath.Join(trashFilePath, fileNameInTrash)                  // 文件在回收站的路径
+						// 创建回收站
+						if err := general.CreateDir(trashFilePath); err != nil {
+							fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
+						}
+						// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
+						for num := 1; ; num++ {
+							if !general.FileExist(filePathInTrash) {
+								break
+							}
+							fileNameInTrash = fmt.Sprintf("%s_%d", filename, num)
+							filePathInTrash = filepath.Join(trashFilePath, fileNameInTrash)
+						}
+						// 将文件移动到回收站
+						if err = os.Rename(file, filePathInTrash); err != nil {
+							fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
+						} else {
+							trashinfoCreator(trashinfoPath, fileNameInTrash, filename) // 可移动设备"已删除文件的原路径"不能用绝对路径而应用纯粹的文件名
+						}
+						flag = true
+						break
+					}
+				}
+				if !flag {
+					fmt.Printf(general.ErrorSuffixFormat, "Cross-file system operations", ": ", fmt.Sprintf("move '%s' to '%s'", file, general.TrashPath))
+				}
 			}
 		} else {
 			fmt.Printf(general.ErrorSuffixFormat, fmt.Sprintf("Cannot remove '%s'", file), ": ", "No such file or directory")
 		}
+		break
 	}
 }
 

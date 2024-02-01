@@ -10,9 +10,7 @@ Description: 磁盘、挂载点相关函数
 package general
 
 import (
-	"path/filepath"
-	"syscall"
-
+	"github.com/jaypipes/ghw"
 	"github.com/shirou/gopsutil/v3/disk"
 )
 
@@ -51,57 +49,56 @@ func GetMountpoints() ([]string, error) {
 	return mountpoints, nil
 }
 
-// IsMountPoint 测试路径是否为挂载点
+// InThisMountpoint 判断文件是否在指定的挂载点中
 //
 // 参数：
-//   - path: 待测试路径
+//   - filePath: 文件路径
+//   - mountpoints: 挂载点切片
 //
 // 返回：
-//   - 是挂载点返回 true，否则返回 false 和错误信息
-func IsMountPoint(path string) (bool, error) {
-	// 根目录单独处理
-	if path == "/" {
-		return isRootMount(path)
+//   - 文件在指定的挂载点中返回 true，否则返回 false
+func InThisMountpoint(filepath string, mountpoints []string) bool {
+	for _, mountpoint := range mountpoints {
+		if mountpoint == "/home" {
+			return true
+		}
 	}
-
-	// 获取给定路径的状态信息
-	var stat syscall.Stat_t
-	if err := syscall.Stat(path, &stat); err != nil {
-		return false, err
-	}
-
-	// 获取父目录的路径
-	parent := filepath.Dir(path)
-	// 获取父目录的状态信息
-	var parentStat syscall.Stat_t
-	if err := syscall.Stat(parent, &parentStat); err != nil {
-		return false, err
-	}
-
-	// 如果给定路径的设备号不等于父目录的设备号，则认为是挂载点
-	return stat.Dev != parentStat.Dev, nil
+	return false
 }
 
-// isRootMount 检查给定路径是否为根挂载点
+// PartitionInfo 结构体存储分区信息
+type PartitionInfo struct {
+	Device    string // 设备名
+	Mount     string // 挂载点
+	Removable bool   // 设备是否可移除
+}
+
+// GetPartitionInfo 获取分区信息
 //
-// 参数：
-//   - path: 待检查路径
+// - 包括设备名、挂载点和设备是否可移除
 //
 // 返回：
-//   - 是根挂载点返回 true，否则返回 false 和错误信息
-func isRootMount(path string) (bool, error) {
-	// 获取给定路径的设备号
-	var stat syscall.Stat_t
-	if err := syscall.Stat(path, &stat); err != nil {
-		return false, err
+//   - 分区信息和错误信息
+func GetPartitionInfo() ([]PartitionInfo, error) {
+	// 获取所有分区信息
+
+	// 创建一个切片以存储分区信息
+	var partitionInfo []PartitionInfo
+
+	// 使用 ghw 获取设备名和可移除状态
+	block, err := ghw.Block()
+	if err != nil {
+		return nil, err
+	}
+	for _, disk := range block.Disks {
+		for _, partition := range disk.Partitions {
+			partitionInfo = append(partitionInfo, PartitionInfo{
+				Device:    disk.Name,
+				Mount:     partition.MountPoint,
+				Removable: disk.IsRemovable,
+			})
+		}
 	}
 
-	// 获取根目录的设备号
-	var rootStat syscall.Stat_t
-	if err := syscall.Stat("/", &rootStat); err != nil {
-		return false, err
-	}
-
-	// 如果给定路径的设备号等于根目录的设备号，则认为是根挂载点
-	return stat.Dev == rootStat.Dev, nil
+	return partitionInfo, nil
 }
