@@ -65,3 +65,25 @@ func UserFace(message string) []int {
 	}
 	return inputNumbers
 }
+
+// StringSliceEqual 比较两个字符串切片是否一样
+//
+// 参数：
+//   - slice1: 切片1
+//   - slice2: 切片2
+//
+// 返回：
+//   - 一样返回 true，一样返回 false
+func StringSliceEqual(slice1, slice2 []string) bool {
+	// 如果切片长度不同，则不相等
+	if len(slice1) != len(slice2) {
+		return false
+	}
+	// 逐个比较切片元素
+	for i := range slice1 {
+		if slice1[i] != slice2[i] {
+			return false
+		}
+	}
+	return true
+}
