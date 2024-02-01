@@ -141,14 +141,14 @@ func FileExist(filePath string) bool {
 	return true
 }
 
-// GetAbsPath 获取指定文件的绝对路径
+// GetFileAbsPath 获取指定文件的绝对路径
 //
 // 参数：
 //   - filePath: 文件路径
 //
 // 返回：
 //   - 文件的绝对路径
-func GetAbsPath(filePath string) string {
+func GetFileAbsPath(filePath string) string {
 	// 获取绝对路径
 	absPath, err := filepath.Abs(filePath)
 	if err != nil {
@@ -156,6 +156,19 @@ func GetAbsPath(filePath string) string {
 	} else {
 		return absPath
 	}
+}
+
+// GetFilePureName 获取指定文件的纯粹文件名
+//
+// 参数：
+//   - filePath: 文件路径
+//
+// 返回：
+//   - 纯粹的文件名字
+func GetFilePureName(filePath string) string {
+	// 获取纯粹文件名
+	pureName := filepath.Base(filePath)
+	return pureName
 }
 
 // FileEmpty 判断文件是否为空

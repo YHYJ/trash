@@ -44,7 +44,7 @@ func RestoreFromTrash() {
 			Index:        index,
 			Time:         parsedDeletionDate,
 			OriginalPath: originalFilePath,
-			Path:         filepath.Join(general.TrashFilesPath, strings.TrimSuffix(filepath.Base(trashinfoFile), filepath.Ext(trashinfoFile))),
+			Path:         filepath.Join(general.TrashFilePath, strings.TrimSuffix(filepath.Base(trashinfoFile), filepath.Ext(trashinfoFile))),
 		}
 		fileEntries = append(fileEntries, entry)
 
