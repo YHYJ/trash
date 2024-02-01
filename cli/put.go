@@ -100,8 +100,8 @@ func PutFiles(files []string) {
 			}
 		} else {
 			fmt.Printf(general.ErrorSuffixFormat, fmt.Sprintf("Cannot remove '%s'", file), ": ", "No such file or directory")
+			break
 		}
-		break
 	}
 }
 
