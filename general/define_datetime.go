@@ -4,13 +4,12 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-30 10:49:31
 
-Description: 日期/时间相关
+Description: 处理日期/时间
 */
 
 package general
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -38,7 +37,6 @@ func ParseDateTime(format, datetimeStr string) (time.Time, error) {
 	// 解析时间字符串
 	parsedTime, err := time.Parse(format, datetimeStr)
 	if err != nil {
-		fmt.Println("解析时间错误:", err)
 		return time.Time{}, err
 	}
 

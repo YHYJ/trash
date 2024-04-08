@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 10:49:25
 
-Description: 涉及数学相关函数
+Description: 处理数学计算
 */
 
 package general

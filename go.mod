@@ -3,6 +3,7 @@ module github.com/yhyj/trash
 go 1.21
 
 require (
+	github.com/gookit/color v1.5.4
 	github.com/jaypipes/ghw v0.12.0
 	github.com/shirou/gopsutil/v3 v3.23.12
 	github.com/spf13/cobra v1.8.0
@@ -19,6 +20,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

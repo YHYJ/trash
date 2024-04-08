@@ -11,10 +11,11 @@ package general
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gookit/color"
 )
 
 // Confirm 风险操作二次确认
@@ -26,7 +27,7 @@ import (
 // 返回：
 //   - 确认返回 true，否则返回 false
 func Confirm(message, flag string) bool {
-	fmt.Print(message)
+	color.Print(DangerText(message))
 
 	reader := bufio.NewReader(os.Stdin)
 	answer, _ := reader.ReadString('\n')
@@ -43,7 +44,7 @@ func Confirm(message, flag string) bool {
 // 返回：
 //   - 用户输入
 func UserFace(message string) []int {
-	fmt.Print(message)
+	color.Print(DangerText(message))
 
 	// 创建一个 STDIN Scanner
 	scanner := bufio.NewScanner(os.Stdin)
@@ -58,7 +59,7 @@ func UserFace(message string) []int {
 	for _, numStr := range numbersStr {
 		num, err := strconv.Atoi(numStr) // 将字符串转换为整数
 		if err != nil {
-			fmt.Printf(ErrorBaseFormat, "Please enter as required")
+			color.Error.Println("Please enter as required")
 			return inputNumbers
 		}
 		inputNumbers = append(inputNumbers, num)

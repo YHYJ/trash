@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 09:44:01
 
-Description: 子命令`put`的实现
+Description: 子命令 'put' 的实现
 */
 
 package cli
@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gookit/color"
 	"github.com/yhyj/trash/general"
 )
 
@@ -39,7 +40,7 @@ func PutFiles(files []string) {
 			// 获取分区信息
 			partitionInfo, err := general.GetPartitionInfo()
 			if err != nil {
-				fmt.Printf(general.RegelarFormat, err)
+				color.Info.Tips(err.Error())
 			}
 
 			// 判断文件和用户回收站是否在同一分区
@@ -47,7 +48,7 @@ func PutFiles(files []string) {
 				filePathInTrash := filepath.Join(general.TrashFilePath, fileNameInTrash) // 文件在回收站的路径
 				// 创建回收站
 				if err := general.CreateDir(general.TrashFilePath); err != nil {
-					fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
+					color.Error.Printf("%s: %s\n", "Error creating trash folder", err)
 				}
 				// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
 				for num := 1; ; num++ {
@@ -59,7 +60,7 @@ func PutFiles(files []string) {
 				}
 				// 将文件移动到回收站
 				if err = os.Rename(file, filePathInTrash); err != nil {
-					fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
+					color.Error.Printf("%s: %s\n", "Error moving to trash", err)
 				} else {
 					trashinfoCreator(general.TrashInfoPath, fileNameInTrash, absPath)
 				}
@@ -74,7 +75,7 @@ func PutFiles(files []string) {
 						filePathInTrash := filepath.Join(trashFilePath, fileNameInTrash)                  // 文件在回收站的路径
 						// 创建回收站
 						if err := general.CreateDir(trashFilePath); err != nil {
-							fmt.Printf(general.ErrorSuffixFormat, "Error creating trash folder", ": ", err)
+							color.Error.Printf("%s: %s\n", "Error creating trash folder", err)
 						}
 						// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
 						for num := 1; ; num++ {
@@ -86,7 +87,7 @@ func PutFiles(files []string) {
 						}
 						// 将文件移动到回收站
 						if err = os.Rename(file, filePathInTrash); err != nil {
-							fmt.Printf(general.ErrorSuffixFormat, "Error moving to trash", ": ", err)
+							color.Error.Printf("%s: %s\n", "Error moving to trash", err)
 						} else {
 							trashinfoCreator(trashinfoPath, fileNameInTrash, filename) // 可移动设备"已删除文件的原路径"不能用绝对路径而应用纯粹的文件名
 						}
@@ -95,11 +96,11 @@ func PutFiles(files []string) {
 					}
 				}
 				if !flag {
-					fmt.Printf(general.ErrorSuffixFormat, "Cross-file system operations", ": ", fmt.Sprintf("move '%s' to '%s'", file, general.TrashPath))
+					color.Error.Printf("Cross-file system operations: move '%s' to '%s'\n", file, general.TrashPath)
 				}
 			}
 		} else {
-			fmt.Printf(general.ErrorSuffixFormat, fmt.Sprintf("Cannot remove '%s'", file), ": ", "No such file or directory")
+			color.Error.Printf("Cannot remove '%s': No such file or directory\n", file)
 			break
 		}
 	}
@@ -115,13 +116,13 @@ func trashinfoCreator(trashPath, fileName, originalPath string) {
 	// 创建已删除文件的 trashinfo 文件
 	trashinfoFilePath := filepath.Join(trashPath, fmt.Sprintf("%s.trashinfo", filepath.Base(fileName)))
 	if err := general.CreateFile(trashinfoFilePath); err != nil {
-		fmt.Printf(general.ErrorSuffixFormat, "Error creating trashinfo file", ": ", err)
+		color.Error.Printf("%s: %s\n", "Error creating trashinfo file", err)
 		return
 	}
 
 	// 写入已删除文件信息
 	trashinfoFileContent := fmt.Sprintf(general.TrashInfoFileContent, originalPath, general.GetDateTime(general.TrashInfoFileTimeFormat))
 	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent); err != nil {
-		fmt.Printf(general.ErrorSuffixFormat, "Error writing trashinfo file", ": ", err)
+		color.Error.Printf("%s: %s\n", "Error writing trashinfo file", err)
 	}
 }

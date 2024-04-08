@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 15:49:08
 
-Description: 子命令`empty`的实现
+Description: 子命令 'empty' 的实现
 */
 
 package cli
@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gookit/color"
 	"github.com/yhyj/trash/general"
 )
 
@@ -21,7 +22,7 @@ import (
 func EmptyTrash() {
 	trashFilesName, err := os.ReadDir(general.TrashFilePath)
 	if err != nil {
-		fmt.Printf(general.ErrorSuffixFormat, "Error reading trash folder", ": ", err)
+		color.Error.Printf("%s: %s\n", "Error reading trash folder", err)
 	}
 
 	for _, trashFileName := range trashFilesName {

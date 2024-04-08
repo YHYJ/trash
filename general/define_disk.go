@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2024-01-30 11:35:38
 
-Description: 磁盘、挂载点相关函数
+Description: 处理磁盘和挂载点
 */
 
 package general

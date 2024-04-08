@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 16:55:14
 
-Description: 子命令`restore`的实现
+Description: 子命令 'restore' 的实现
 */
 
 package cli
@@ -17,6 +17,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/gookit/color"
 	"github.com/yhyj/trash/general"
 )
 
@@ -25,22 +26,22 @@ func RestoreFromTrash() {
 	// 获取所有 trashinfo 文件的绝对路径
 	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
-		fmt.Printf(general.ErrorSuffixFormat, "Error listing trashinfo file", ": ", err)
+		color.Error.Printf("%s: %s\n", "Error listing trashinfo file", err)
 		return
 	}
 
 	// 将数据解析为 FileEntry 类型
-	var fileEntries []FileEntry
+	var fileEntries []general.FileEntry
 	for index, trashinfoFile := range trashinfoFiles {
 		originalFilePath := strings.Split(general.ReadFileKey(trashinfoFile, "Path"), "=")[1]           // 文件的原绝对路径
 		deletionDate := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]       // 文件的删除日期时间（未解析）
 		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
-			fmt.Printf(general.ErrorSuffixFormat, "Error parsing trashinfo file", ": ", err)
+			color.Error.Printf("%s: %s\n", "Error parsing trashinfo file", err)
 			break
 		}
 
-		entry := FileEntry{
+		entry := general.FileEntry{
 			Index:        index,
 			Time:         parsedDeletionDate,
 			OriginalPath: originalFilePath,
@@ -64,17 +65,17 @@ func RestoreFromTrash() {
 		// 输出排序后的数据
 		digits := general.CountDigits(fileEntriesLen) // 文本对齐位数
 		for _, entry := range fileEntries {
-			fmt.Printf("%*d %s %s %s\n", digits+2, entry.Index, entry.Time.Format("2006-01-02"), entry.Time.Format("15:04:05"), entry.OriginalPath)
+			color.Printf("%*s %s %s %s\n", digits+2, general.NoteText(entry.Index), general.FgCyan(entry.Time.Format("2006-01-02")), general.FgMagenta(entry.Time.Format("15:04:05")), entry.OriginalPath)
 		}
 
 		// 交互获取要恢复的文件切片
 		userIndexs := general.UserFace(fmt.Sprintf("What file to restore (Example: 0 or 1 ... %d, 0 restore all): ", fileEntriesLen))
 		if len(userIndexs) == 0 {
-			fmt.Println("Exiting")
+			color.Println("Exiting")
 			return
 		}
 
-		var restoreThisFiles []FileEntry // 待恢复文件信息
+		var restoreThisFiles []general.FileEntry // 待恢复文件信息
 		// 切片只有一个元素且其值为 0，表示全部恢复
 		if len(userIndexs) == 1 && userIndexs[0] == 0 {
 			restoreThisFiles = fileEntries
@@ -98,10 +99,10 @@ func RestoreFromTrash() {
 				})
 
 				if sortedUserIndex == 0 {
-					fmt.Printf(general.ErrorBaseFormat, "0 can only be used alone")
+					color.Error.Printf("%s\n", "0 can only be used alone")
 					return
 				} else if index < fileEntriesLen && sortedUserIndex == fileEntries[index].Index {
-					entry := FileEntry{
+					entry := general.FileEntry{
 						Index:        fileEntries[index].Index,
 						Time:         fileEntries[index].Time,
 						OriginalPath: fileEntries[index].OriginalPath,
@@ -109,7 +110,7 @@ func RestoreFromTrash() {
 					}
 					restoreThisFiles = append(restoreThisFiles, entry)
 				} else {
-					fmt.Printf("没有编号为 %d 的文件\n", sortedUserIndex)
+					color.Printf("没有编号为 %d 的文件\n", sortedUserIndex)
 					return
 				}
 			}
@@ -118,19 +119,19 @@ func RestoreFromTrash() {
 		// 开始恢复
 		for _, restoreThisFile := range restoreThisFiles {
 			if general.FileExist(restoreThisFile.OriginalPath) && !general.FileEmpty(restoreThisFile.OriginalPath) {
-				fmt.Printf(general.ErrorSuffixFormat, "Error restoring files", ": ", fmt.Sprintf("%s file already exists and is not empty", restoreThisFile.OriginalPath))
+				color.Error.Printf("Error restoring files: %s file already exists and is not empty\n", restoreThisFile.OriginalPath)
 				break
 			}
 			// 将回收站文件恢复到原路径
 			err := os.Rename(restoreThisFile.Path, restoreThisFile.OriginalPath)
 			if err != nil {
-				fmt.Printf(general.ErrorSuffixFormat, "Error restoring files", ": ", err)
+				color.Error.Printf("%s: %s\n", "Error restoring files", err)
 			}
 			// 删除其对应的 trashinfo 文件
 			general.DeleteFile(filepath.Join(general.TrashInfoPath, fmt.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
 		}
 	} else {
-		fmt.Printf(general.RegelarFormat, "No files in trash")
+		color.Printf("%s\n", general.LightText("No files in trash"))
 		return
 	}
 }

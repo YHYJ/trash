@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-11-26 11:05:39
 
-Description: 程序子命令'empty'时执行
+Description: 执行子命令 'empty'
 */
 
 package cmd
@@ -21,7 +21,7 @@ var emptyCmd = &cobra.Command{
 	Short: "Empty files in the recycle bin",
 	Long:  `Empty files in the recycle bin, number each file, 0 represents all files.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.CheckRecycleBin() // 检查回收站是否存在
+		general.CheckRecycleBin() // 检查回收站是否存在
 		if general.Confirm("Are you sure you want to empty the recycle bin? (yes/No): ", "yes") {
 			cli.EmptyTrash() // 清空回收站
 		}
