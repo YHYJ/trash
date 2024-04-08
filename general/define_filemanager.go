@@ -13,12 +13,13 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/gookit/color"
 )
 
 // GetFsID 获取文件所在文件系统的 ID
@@ -53,7 +54,7 @@ func ReadFileLine(file string, line int) string {
 	// 打开文件
 	text, err := os.Open(file)
 	if err != nil {
-		log.Println(err)
+		color.Error.Println(err)
 	}
 	defer text.Close()
 
@@ -83,7 +84,7 @@ func ReadFileKey(file, key string) string {
 	// 打开文件
 	text, err := os.Open(file)
 	if err != nil {
-		log.Println(err)
+		color.Error.Println(err)
 	}
 	defer text.Close()
 
@@ -110,7 +111,7 @@ func ReadFileCount(file, key string) int {
 	// 打开文件
 	text, err := os.Open(file)
 	if err != nil {
-		log.Println(err)
+		color.Error.Println(err)
 	}
 	defer text.Close()
 
@@ -277,8 +278,7 @@ func GoToDir(dirPath string) error {
 func WriteFile(filePath string, content string) error {
 	// 文件存在
 	if FileExist(filePath) {
-		// 文件内容为空
-		if FileEmpty(filePath) {
+		if FileEmpty(filePath) { // 文件内容为空
 			// 打开文件并写入内容
 			file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
@@ -289,8 +289,7 @@ func WriteFile(filePath string, content string) error {
 					return err
 				}
 			}
-		} else {
-			// 文件内容不为空
+		} else { // 文件内容不为空
 			return fmt.Errorf("File %s is not empty", filePath)
 		}
 	} else {
