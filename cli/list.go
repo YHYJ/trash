@@ -56,7 +56,7 @@ func ListFiles() {
 
 	// 输出文件列表
 	for _, entry := range fileEntries {
-		color.Printf("%s %s %s\n", general.FgCyan(entry.Time.Format("2006-01-02")), general.FgMagenta(entry.Time.Format("15:04:05")), entry.OriginalPath)
+		color.Printf("%s %s %s\n", general.FgCyanText(entry.Time.Format("2006-01-02")), general.FgMagentaText(entry.Time.Format("15:04:05")), entry.OriginalPath)
 	}
 
 	// 输出文件总数

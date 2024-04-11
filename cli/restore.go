@@ -65,7 +65,7 @@ func RestoreFromTrash() {
 		// 输出排序后的数据
 		digits := general.CountDigits(fileEntriesLen) // 文本对齐位数
 		for _, entry := range fileEntries {
-			color.Printf("%*s %s %s %s\n", digits+2, general.NoteText(entry.Index), general.FgCyan(entry.Time.Format("2006-01-02")), general.FgMagenta(entry.Time.Format("15:04:05")), entry.OriginalPath)
+			color.Printf("%*s %s %s %s\n", digits+2, general.NoteText(entry.Index), general.FgCyanText(entry.Time.Format("2006-01-02")), general.FgMagentaText(entry.Time.Format("15:04:05")), entry.OriginalPath)
 		}
 
 		// 交互获取要恢复的文件切片

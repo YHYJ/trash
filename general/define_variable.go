@@ -10,7 +10,6 @@ Description: 操作变量
 package general
 
 import (
-	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -20,87 +19,42 @@ import (
 	"github.com/gookit/color"
 )
 
-// ---------- 自定义数据类型
-
-type StringSlice []string
-
-// Have 检查 StringSlice 中是否存在指定的字符串
-func (s StringSlice) Have(target string) bool {
-	// 遍历切片中的每个元素
-	for _, item := range s {
-		// 如果找到目标字符串，则返回 true
-		if item == target {
-			return true
-		}
-	}
-	// 如果切片中不存在目标字符串，则返回 false
-	return false
-}
-
 // ---------- 代码变量
 
 var (
-	RegelarFormat   = "%s\n"   // 常规输出格式 常规输出: <输出内容>
-	Regelar2PFormat = "%s%s\n" // 常规输出格式 常规输出·2部分: <输出内容1><输出内容2>
+	FgBlackText        = color.FgBlack.Render        // 前景色 - 黑色
+	FgWhiteText        = color.FgWhite.Render        // 前景色 - 白色
+	FgLightWhiteText   = color.FgLightWhite.Render   // 前景色 - 亮白色
+	FgGrayText         = color.FgGray.Render         // 前景色 - 灰色
+	FgRedText          = color.FgRed.Render          // 前景色 - 红色
+	FgLightRedText     = color.FgLightRed.Render     // 前景色 - 亮红色
+	FgGreenText        = color.FgGreen.Render        // 前景色 - 绿色
+	FgLightGreenText   = color.FgLightGreen.Render   // 前景色 - 亮绿色
+	FgYellowText       = color.FgYellow.Render       // 前景色 - 黄色
+	FgLightYellowText  = color.FgLightYellow.Render  // 前景色 - 亮黄色
+	FgBlueText         = color.FgBlue.Render         // 前景色 - 蓝色
+	FgLightBlueText    = color.FgLightBlue.Render    // 前景色 - 亮蓝色
+	FgMagentaText      = color.FgMagenta.Render      // 前景色 - 品红
+	FgLightMagentaText = color.FgLightMagenta.Render // 前景色 - 亮品红
+	FgCyanText         = color.FgCyan.Render         // 前景色 - 青色
+	FgLightCyanText    = color.FgLightCyan.Render    // 前景色 - 亮青色
 
-	TitleH1Format = "\n\x1b[36;3m%s\x1b[0m\n\n" // 标题输出格式 H1级别标题: <标题文字>
-
-	LineHiddenFormat = "\x1b[30m%s\x1b[0m\n"   // 分隔线输出格式 隐性分隔线: <分隔线>
-	LineShownFormat  = "\x1b[30;1m%s\x1b[0m\n" // 分隔线输出格式 显性分隔线: <分隔线>
-
-	SliceTraverseFormat                  = "\x1b[32;1m%s\x1b[0m\n"                                                                                 // Slice输出格式 切片遍历: <切片内容>
-	SliceTraverseSuffixFormat            = "\x1b[32;1m%s\x1b[0m%s%s\n"                                                                             // Slice输出格式 带后缀的切片遍历: <切片内容><分隔符><后缀>
-	SliceTraverse2PFormat                = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m\n"                                                              // Slice输出格式 切片遍历·2部分: <切片内容1><分隔符><切片内容2>
-	SliceTraverse2PSuffixFormat          = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s%s\n"                                                          // Slice输出格式 带后缀的切片遍历·2部分: <切片内容1><分隔符><切片内容2><分隔符><后缀>
-	SliceTraverse2PSuffixNoNewLineFormat = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s%s"                                                            // Slice输出格式 带后缀的切片遍历·2部分·不换行: <切片内容1><分隔符><切片内容2><分隔符><后缀>
-	SliceTraverse3PSuffixFormat          = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s\x1b[33;1m%s\x1b[0m%s%s\n"                                     // Slice输出格式 带后缀的切片遍历·3部分: <切片内容1><分隔符><切片内容2><分隔符><切片内容3><分隔符><后缀>
-	SliceTraverse4PFormat                = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s\x1b[33m%s\x1b[0m%s\x1b[35;1m%s\x1b[0m\n"                      // Slice输出格式 切片遍历·4部分: <切片内容1><分隔符><切片内容2><分隔符><切片内容3><分隔符><切片内容4>
-	SliceTraverse4PSuffixFormat          = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s\x1b[33m%s\x1b[0m%s\x1b[35;1m%s\x1b[0m%s%s\n"                  // Slice输出格式 带后缀的切片遍历·4部分: <切片内容1><分隔符><切片内容2><分隔符><切片内容3><分隔符><切片内容4><分隔符><后缀>
-	SliceTraverse5PFormat                = "\x1b[32;1m%s\x1b[0m%s\x1b[34m%s\x1b[0m%s\x1b[33;1m%s\x1b[0m%s\x1b[33m%s\x1b[0m%s\x1b[35;1m%s\x1b[0m\n" // Slice输出格式 切片遍历·5部分: <切片内容1><分隔符><切片内容2><分隔符><切片内容3><分隔符><切片内容4><分隔符><切片内容5>
-
-	AskFormat = "\x1b[34;1m%s\x1b[0m" // 问询信息输出格式 问询信息: <问询信息>
-
-	SuccessFormat                = "\x1b[32;1m%s\x1b[0m\n"     // 成功信息输出格式 成功信息: <成功信息>
-	SuccessDarkFormat            = "\x1b[36;1m%s\x1b[0m\n"     // 成功信息输出格式 暗色成功信息: <成功信息>
-	SuccessNoNewLineFormat       = "\x1b[32;1m%s\x1b[0m"       // 成功信息输出格式 成功信息·不换行: <成功信息>
-	SuccessSuffixFormat          = "\x1b[32;1m%s\x1b[0m%s%s\n" // 成功信息输出格式 带后缀的成功信息: <成功信息><分隔符><后缀>
-	SuccessSuffixNoNewLineFormat = "\x1b[32;1m%s\x1b[0m%s%s"   // 成功信息输出格式 带后缀的成功信息·不换行: <成功信息><分隔符><后缀>
-
-	TipsPrefixFormat            = "%s%s\x1b[32;1m%s\x1b[0m\n"                    // 提示信息输出格式 带前缀的提示信息: <提示信息>
-	Tips2PSuffixNoNewLineFormat = "\x1b[32;1m%s\x1b[0m%s\x1b[36;1m%s\x1b[0m%s%s" // 提示信息输出格式 带后缀的提示信息·2部分·不换行: <提示信息1><分隔符><提示信息2><分隔符><后缀>
-
-	InfoFormat             = "\x1b[33;1m%s\x1b[0m\n"                        // 展示信息输出格式 展示信息: <展示信息>
-	Info2PFormat           = "\x1b[33;1m%s%s\x1b[0m\n"                      // 展示信息输出格式 展示信息·2部分: <展示信息><展示信息>
-	InfoPrefixFormat       = "%s%s\x1b[33;1m%s\x1b[0m\n"                    // 展示信息输出格式 带前缀的展示信息: <前缀><分隔符><展示信息>
-	Info2PPrefixFormat     = "%s%s\x1b[33;1m%s\x1b[0m%s\x1b[35m%s\x1b[0m\n" // 展示信息输出格式 带前缀的展示信息·2部分: <前缀><分隔符><展示信息1><分隔符><展示信息2>
-	InfoSuffixFormat       = "\x1b[33;1m%s\x1b[0m%s%s\n"                    // 展示信息输出格式 带后缀的展示信息: <展示信息><分隔符><后缀>
-	InfoPrefixSuffixFormat = "%s%s\x1b[33;1m%s\x1b[0m%s%s\n"                // 展示信息输出格式 带前后缀的展示信息: <前缀><分隔符><展示信息><分隔符><后缀>
-
-	ErrorBaseFormat   = "\x1b[31m%s\x1b[0m\n"     // 错误信息输出格式 基础错误: <错误信息>
-	ErrorPrefixFormat = "%s%s\x1b[31m%s\x1b[0m\n" // 错误信息输出格式 带前缀的错误: <前缀><分隔符><错误信息>
-	ErrorSuffixFormat = "\x1b[31m%s\x1b[0m%s%s\n" // 错误信息输出格式 带后缀的错误: <错误信息><分隔符><后缀>
-)
-
-var (
-	FgBlack   = color.FgBlack.Render   // 前景色 - 黑色
-	FgWhite   = color.FgWhite.Render   // 前景色 - 白色
-	FgGray    = color.FgGray.Render    // 前景色 - 灰色
-	FgRed     = color.FgRed.Render     // 前景色 - 红色
-	FgGreen   = color.FgGreen.Render   // 前景色 - 绿色
-	FgYellow  = color.FgYellow.Render  // 前景色 - 黄色
-	FgBlue    = color.FgBlue.Render    // 前景色 - 蓝色
-	FgMagenta = color.FgMagenta.Render // 前景色 - 品红
-	FgCyan    = color.FgCyan.Render    // 前景色 - 青色
-
-	BgBlack   = color.BgBlack.Render   // 背景色 - 黑色
-	BgWhite   = color.BgWhite.Render   // 背景色 - 白色
-	BgGray    = color.BgGray.Render    // 背景色 - 灰色
-	BgRed     = color.BgRed.Render     // 背景色 - 红色
-	BgGreen   = color.BgGreen.Render   // 背景色 - 绿色
-	BgYellow  = color.BgYellow.Render  // 背景色 - 黄色
-	BgBlue    = color.BgBlue.Render    // 背景色 - 蓝色
-	BgMagenta = color.BgMagenta.Render // 背景色 - 品红
-	BgCyan    = color.BgCyan.Render    // 背景色 - 青色
+	BgBlackText        = color.BgBlack.Render        // 背景色 - 黑色
+	BgWhiteText        = color.BgWhite.Render        // 背景色 - 白色
+	BgLightWhiteText   = color.BgLightWhite.Render   // 背景色 - 亮白色
+	BgGrayText         = color.BgGray.Render         // 背景色 - 灰色
+	BgRedText          = color.BgRed.Render          // 背景色 - 红色
+	BgLightRedText     = color.BgLightRed.Render     // 背景色 - 亮红色
+	BgGreenText        = color.BgGreen.Render        // 背景色 - 绿色
+	BgLightGreenText   = color.BgLightGreen.Render   // 背景色 - 亮绿色
+	BgYellowText       = color.BgYellow.Render       // 背景色 - 黄色
+	BgLightYellowText  = color.BgLightYellow.Render  // 背景色 - 亮黄色
+	BgBlueText         = color.BgBlue.Render         // 背景色 - 蓝色
+	BgLightBlueText    = color.BgLightBlue.Render    // 背景色 - 亮蓝色
+	BgMagentaText      = color.BgMagenta.Render      // 背景色 - 品红
+	BgLightMagentaText = color.BgLightMagenta.Render // 背景色 - 亮品红
+	BgCyanText         = color.BgCyan.Render         // 背景色 - 青色
+	BgLightCyanText    = color.BgLightCyan.Render    // 背景色 - 亮青色
 
 	InfoText      = color.Info.Render      // Info 文本
 	NoteText      = color.Note.Render      // Note 文本
@@ -125,11 +79,13 @@ var (
 		if FileExist(otherTrash) {
 			return otherTrash
 		}
-		return fmt.Sprintf(".Trash-%s", UserID)
+		return color.Sprintf(".Trash-%s", UserID)
 	}()
 	TrashInfoFileContent    = "[Trash Info]\nPath=%s\nDeletionDate=%s\n" // 已删除文件的 trashinfo 文件内容
 	TrashInfoFileTimeFormat = "2006-01-02T15:04:05"                      // 记录文件删除时间的字符串格式
 )
+
+type StringSlice []string
 
 var fsTypes = StringSlice{ // 在此切片中的文件系统类型视为物理设备（来自 https://github.com/andreafrancia/trash-cli）
 	"btrfs",
@@ -251,4 +207,17 @@ func GetCurrentUserInfo() (*user.User, error) {
 		return nil, err
 	}
 	return currentUser, nil
+}
+
+// Have 检查字符串切片中是否存在指定的字符串
+func (s StringSlice) Have(target string) bool {
+	// 遍历切片中的每个元素
+	for _, item := range s {
+		// 如果找到目标字符串，则返回 true
+		if item == target {
+			return true
+		}
+	}
+	// 如果切片中不存在目标字符串，则返回 false
+	return false
 }
