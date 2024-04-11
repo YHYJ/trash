@@ -10,7 +10,6 @@ Description: 子命令 'restore' 的实现
 package cli
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -69,7 +68,7 @@ func RestoreFromTrash() {
 		}
 
 		// 交互获取要恢复的文件切片
-		userIndexs := general.UserFace(fmt.Sprintf("What file to restore (Example: 0 or 1 ... %d, 0 restore all): ", fileEntriesLen))
+		userIndexs := general.UserFace(color.Sprintf("What file to restore (Example: 0 or 1 ... %d, 0 restore all): ", fileEntriesLen))
 		if len(userIndexs) == 0 {
 			color.Println("Exiting")
 			return
@@ -128,7 +127,7 @@ func RestoreFromTrash() {
 				color.Error.Printf("%s: %s\n", "Error restoring files", err)
 			}
 			// 删除其对应的 trashinfo 文件
-			general.DeleteFile(filepath.Join(general.TrashInfoPath, fmt.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
+			general.DeleteFile(filepath.Join(general.TrashInfoPath, color.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
 		}
 	} else {
 		color.Printf("%s\n", general.LightText("No files in trash"))

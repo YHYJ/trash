@@ -10,7 +10,6 @@ Description: 子命令 'empty' 的实现
 package cli
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -27,7 +26,7 @@ func EmptyTrash() {
 
 	for _, trashFileName := range trashFilesName {
 		trashFile := filepath.Join(general.TrashFilePath, trashFileName.Name())
-		trashinfoFile := filepath.Join(general.TrashInfoPath, fmt.Sprintf("%s.trashinfo", trashFileName.Name()))
+		trashinfoFile := filepath.Join(general.TrashInfoPath, color.Sprintf("%s.trashinfo", trashFileName.Name()))
 		os.RemoveAll(trashFile)     // 删除回收站中的文件
 		os.RemoveAll(trashinfoFile) // 删除 trashinfo 文件
 	}

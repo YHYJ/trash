@@ -10,7 +10,6 @@ Description: 子命令 'put' 的实现
 package cli
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -55,7 +54,7 @@ func PutFiles(files []string) {
 					if !general.FileExist(filePathInTrash) {
 						break
 					}
-					fileNameInTrash = fmt.Sprintf("%s_%d", filename, num)
+					fileNameInTrash = color.Sprintf("%s_%d", filename, num)
 					filePathInTrash = filepath.Join(general.TrashFilePath, fileNameInTrash)
 				}
 				// 将文件移动到回收站
@@ -82,7 +81,7 @@ func PutFiles(files []string) {
 							if !general.FileExist(filePathInTrash) {
 								break
 							}
-							fileNameInTrash = fmt.Sprintf("%s_%d", filename, num)
+							fileNameInTrash = color.Sprintf("%s_%d", filename, num)
 							filePathInTrash = filepath.Join(trashFilePath, fileNameInTrash)
 						}
 						// 将文件移动到回收站
@@ -114,14 +113,14 @@ func PutFiles(files []string) {
 //   - originalPath: 已删除文件的原路径
 func trashinfoCreator(trashPath, fileName, originalPath string) {
 	// 创建已删除文件的 trashinfo 文件
-	trashinfoFilePath := filepath.Join(trashPath, fmt.Sprintf("%s.trashinfo", filepath.Base(fileName)))
+	trashinfoFilePath := filepath.Join(trashPath, color.Sprintf("%s.trashinfo", filepath.Base(fileName)))
 	if err := general.CreateFile(trashinfoFilePath); err != nil {
 		color.Error.Printf("%s: %s\n", "Error creating trashinfo file", err)
 		return
 	}
 
 	// 写入已删除文件信息
-	trashinfoFileContent := fmt.Sprintf(general.TrashInfoFileContent, originalPath, general.GetDateTime(general.TrashInfoFileTimeFormat))
+	trashinfoFileContent := color.Sprintf(general.TrashInfoFileContent, originalPath, general.GetDateTime(general.TrashInfoFileTimeFormat))
 	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent); err != nil {
 		color.Error.Printf("%s: %s\n", "Error writing trashinfo file", err)
 	}
