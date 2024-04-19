@@ -22,7 +22,7 @@ var listCmd = &cobra.Command{
 	Long:  `List all files in the recycle bin.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		general.CheckRecycleBin() // 检查回收站是否存在
-		cli.ListFiles()       // 列出回收站中的文件
+		cli.ListFiles()           // 列出回收站中的文件
 	},
 }
 

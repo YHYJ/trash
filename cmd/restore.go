@@ -21,8 +21,8 @@ var restoreCmd = &cobra.Command{
 	Short: "Restore files from recycle bin",
 	Long:  `Restore files from recycle bin, number each file, 0 represents all files.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		general.CheckRecycleBin()  // 检查回收站是否存在
-		cli.RestoreFromTrash() // 恢复回收站中的文件
+		general.CheckRecycleBin() // 检查回收站是否存在
+		cli.RestoreFromTrash()    // 恢复回收站中的文件
 	},
 }
 
