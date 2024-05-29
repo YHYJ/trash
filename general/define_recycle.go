@@ -27,11 +27,11 @@ type FileEntry struct {
 func CheckRecycleBin() {
 	if !FileExist(TrashFilePath) {
 		if err := CreateDir(TrashFilePath); err != nil {
-			color.Error.Printf("%s: %s\n", "Error creating trash folder", err)
+			color.Danger.Printf("Error creating trash folder: %s\n", err)
 		}
 	} else if !FileExist(TrashInfoPath) {
 		if err := CreateDir(TrashInfoPath); err != nil {
-			color.Error.Printf("%s: %s\n", "Error creating trash folder", err)
+			color.Danger.Printf("Error creating trash folder: %s\n", err)
 		}
 	}
 }

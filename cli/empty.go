@@ -21,7 +21,7 @@ import (
 func EmptyTrash() {
 	trashFilesName, err := os.ReadDir(general.TrashFilePath)
 	if err != nil {
-		color.Error.Printf("%s: %s\n", "Error reading trash folder", err)
+		color.Danger.Printf("Error reading trash folder: %s\n", err)
 	}
 
 	for _, trashFileName := range trashFilesName {

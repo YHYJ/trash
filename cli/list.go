@@ -22,7 +22,7 @@ func ListFiles() {
 	// 获取所有 trashinfo 文件的绝对路径
 	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
-		color.Error.Printf("%s: %s\n", "Error listing trashinfo file", err)
+		color.Danger.Printf("Error listing trashinfo file: %s\n", err)
 		return
 	}
 
@@ -33,7 +33,7 @@ func ListFiles() {
 		deletionDate := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]       // 文件的删除日期时间（未解析）
 		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
-			color.Error.Printf("%s: %s\n", "Error parsing trashinfo file", err)
+			color.Danger.Printf("Error parsing trashinfo file: %s\n", err)
 			break
 		}
 

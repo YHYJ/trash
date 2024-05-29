@@ -25,7 +25,7 @@ func RestoreFromTrash() {
 	// 获取所有 trashinfo 文件的绝对路径
 	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
-		color.Error.Printf("%s: %s\n", "Error listing trashinfo file", err)
+		color.Danger.Printf("Error listing trashinfo file: %s\n", err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func RestoreFromTrash() {
 		deletionDate := strings.Split(general.ReadFileKey(trashinfoFile, "DeletionDate"), "=")[1]       // 文件的删除日期时间（未解析）
 		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
-			color.Error.Printf("%s: %s\n", "Error parsing trashinfo file", err)
+			color.Danger.Printf("Error parsing trashinfo file: %s\n", err)
 			break
 		}
 
@@ -98,7 +98,7 @@ func RestoreFromTrash() {
 				})
 
 				if sortedUserIndex == 0 {
-					color.Error.Printf("%s\n", "0 can only be used alone")
+					color.Danger.Printf("%s\n", "0 can only be used alone")
 					return
 				} else if index < fileEntriesLen && sortedUserIndex == fileEntries[index].Index {
 					entry := general.FileEntry{
@@ -118,13 +118,13 @@ func RestoreFromTrash() {
 		// 开始恢复
 		for _, restoreThisFile := range restoreThisFiles {
 			if general.FileExist(restoreThisFile.OriginalPath) && !general.FileEmpty(restoreThisFile.OriginalPath) {
-				color.Error.Printf("Error restoring files: %s file already exists and is not empty\n", restoreThisFile.OriginalPath)
+				color.Danger.Printf("Error restoring files: %s file already exists and is not empty\n", restoreThisFile.OriginalPath)
 				break
 			}
 			// 将回收站文件恢复到原路径
 			err := os.Rename(restoreThisFile.Path, restoreThisFile.OriginalPath)
 			if err != nil {
-				color.Error.Printf("%s: %s\n", "Error restoring files", err)
+				color.Danger.Printf("Error restoring files: %s\n", err)
 			}
 			// 删除其对应的 trashinfo 文件
 			general.DeleteFile(filepath.Join(general.TrashInfoPath, color.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))
