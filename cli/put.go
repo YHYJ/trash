@@ -112,8 +112,7 @@ func PutFiles(files []string) {
 //   - fileName: trashinfo 文件的文件名（不包含后缀名）
 //   - originalPath: 已删除文件的原路径
 func trashinfoCreator(trashPath, fileName, originalPath string) {
-	// 预定义变量
-	var writeMode string = "t"
+	var writeMode = "t" // 写入模式
 
 	// 创建已删除文件的 trashinfo 文件
 	trashinfoFilePath := filepath.Join(trashPath, color.Sprintf("%s.trashinfo", filepath.Base(fileName)))
