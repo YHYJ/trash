@@ -31,7 +31,7 @@ func PutFiles(files []string) {
 		// 判断文件是否存在
 		if general.FileExist(file) {
 			// 待删除文件
-			absPath := general.GetFileAbsPath(file)   // 待删除文件的绝对路径
+			absPath := general.GetAbsPath(file)       // 待删除文件的绝对路径
 			filename := general.GetFilePureName(file) // 待删除文件名
 			// 回收站文件
 			fileNameInTrash := filename // 文件在回收站的名字
@@ -112,6 +112,9 @@ func PutFiles(files []string) {
 //   - fileName: trashinfo 文件的文件名（不包含后缀名）
 //   - originalPath: 已删除文件的原路径
 func trashinfoCreator(trashPath, fileName, originalPath string) {
+	// 预定义变量
+	var writeMode string = "t"
+
 	// 创建已删除文件的 trashinfo 文件
 	trashinfoFilePath := filepath.Join(trashPath, color.Sprintf("%s.trashinfo", filepath.Base(fileName)))
 	if err := general.CreateFile(trashinfoFilePath); err != nil {
@@ -121,7 +124,7 @@ func trashinfoCreator(trashPath, fileName, originalPath string) {
 
 	// 写入已删除文件信息
 	trashinfoFileContent := color.Sprintf(general.TrashInfoFileContent, originalPath, general.GetDateTime(general.TrashInfoFileTimeFormat))
-	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent); err != nil {
+	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent, writeMode); err != nil {
 		color.Danger.Printf("Error writing trashinfo file: %s\n", err)
 	}
 }
