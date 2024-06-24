@@ -122,8 +122,7 @@ func RestoreFromTrash() {
 				break
 			}
 			// 将回收站文件恢复到原路径
-			err := os.Rename(restoreThisFile.Path, restoreThisFile.OriginalPath)
-			if err != nil {
+			if err := os.Rename(restoreThisFile.Path, restoreThisFile.OriginalPath); err != nil {
 				color.Danger.Printf("Error restoring files: %s\n", err)
 			}
 			// 删除其对应的 trashinfo 文件
