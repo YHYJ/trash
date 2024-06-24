@@ -74,11 +74,13 @@ func (s StringSlice) Have(target string) bool {
 func CheckRecycleBin() {
 	if !FileExist(TrashFilePath) {
 		if err := CreateDir(TrashFilePath); err != nil {
-			color.Danger.Printf("Error creating trash folder: %s\n", err)
+			fileName, lineNo := GetCallerInfo()
+			color.Printf("%s %s -> Unable to create trash folder: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	} else if !FileExist(TrashInfoPath) {
 		if err := CreateDir(TrashInfoPath); err != nil {
-			color.Danger.Printf("Error creating trash folder: %s\n", err)
+			fileName, lineNo := GetCallerInfo()
+			color.Printf("%s %s -> Unable to create trash folder: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	}
 }

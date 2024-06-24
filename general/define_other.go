@@ -59,7 +59,7 @@ func UserFace(message string) []int {
 	for _, numStr := range numbersStr {
 		num, err := strconv.Atoi(numStr) // 将字符串转换为整数
 		if err != nil {
-			color.Danger.Println("Please enter as required")
+			color.Warn.Println("Please enter as required")
 			return inputNumbers
 		}
 		inputNumbers = append(inputNumbers, num)
