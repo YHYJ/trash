@@ -75,12 +75,12 @@ func CheckRecycleBin() {
 	if !FileExist(TrashFilePath) {
 		if err := CreateDir(TrashFilePath); err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to create trash folder: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	} else if !FileExist(TrashInfoPath) {
 		if err := CreateDir(TrashInfoPath); err != nil {
 			fileName, lineNo := GetCallerInfo()
-			color.Printf("%s %s -> Unable to create trash folder: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", DangerText(ErrorInfoFlag), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		}
 	}
 }

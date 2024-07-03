@@ -48,7 +48,7 @@ func PutFiles(files []string) {
 				// 创建回收站
 				if err := general.CreateDir(general.TrashFilePath); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
-					color.Printf("%s %s -> Unable to create trash folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+					color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				}
 				// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
 				for num := 1; ; num++ {
@@ -61,7 +61,7 @@ func PutFiles(files []string) {
 				// 将文件移动到回收站
 				if err = os.Rename(file, filePathInTrash); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
-					color.Printf("%s %s -> Unable to move to trash: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+					color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				} else {
 					trashinfoCreator(general.TrashInfoPath, fileNameInTrash, absPath)
 				}
@@ -77,7 +77,7 @@ func PutFiles(files []string) {
 						// 创建回收站
 						if err := general.CreateDir(trashFilePath); err != nil {
 							fileName, lineNo := general.GetCallerInfo()
-							color.Printf("%s %s -> Unable to create trash folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+							color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 						}
 						// 若回收站中存在同名文件，则为待删除文件名字后增加一个累加的数字后缀
 						for num := 1; ; num++ {
@@ -90,7 +90,7 @@ func PutFiles(files []string) {
 						// 将文件移动到回收站
 						if err = os.Rename(file, filePathInTrash); err != nil {
 							fileName, lineNo := general.GetCallerInfo()
-							color.Printf("%s %s -> Unable to move to trash: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+							color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 						} else {
 							trashinfoCreator(trashinfoPath, fileNameInTrash, filename) // 可移动设备"已删除文件的原路径"不能用绝对路径而应用纯粹的文件名
 						}
@@ -100,12 +100,12 @@ func PutFiles(files []string) {
 				}
 				if !flag {
 					fileName, lineNo := general.GetCallerInfo()
-					color.Printf("%s %s -> Cross-file system operations: move '%s' to '%s'\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), file, general.TrashPath)
+					color.Printf("%s %s Cross-file system operations: move '%s' to '%s'\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), file, general.TrashPath)
 				}
 			}
 		} else {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to remove '%s': No such file or directory\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), file)
+			color.Printf("%s %s No such file or directory: %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), file)
 			break
 		}
 	}
@@ -124,7 +124,7 @@ func trashinfoCreator(trashPath, fileName, originalPath string) {
 	trashinfoFilePath := filepath.Join(trashPath, color.Sprintf("%s.trashinfo", filepath.Base(fileName)))
 	if err := general.CreateFile(trashinfoFilePath); err != nil {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to create trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		return
 	}
 
@@ -132,6 +132,6 @@ func trashinfoCreator(trashPath, fileName, originalPath string) {
 	trashinfoFileContent := color.Sprintf(general.TrashInfoFileContent, originalPath, general.GetDateTime(general.TrashInfoFileTimeFormat))
 	if err := general.WriteFile(trashinfoFilePath, trashinfoFileContent, writeMode); err != nil {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to write trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 }

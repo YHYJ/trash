@@ -23,7 +23,7 @@ func ListFiles() {
 	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to list trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		return
 	}
 
@@ -35,7 +35,7 @@ func ListFiles() {
 		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to parse trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			break
 		}
 

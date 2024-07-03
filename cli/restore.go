@@ -26,7 +26,7 @@ func RestoreFromTrash() {
 	trashinfoFiles, err := filepath.Glob(filepath.Join(general.TrashInfoPath, "*"))
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to list trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		return
 	}
 
@@ -38,7 +38,7 @@ func RestoreFromTrash() {
 		parsedDeletionDate, err := general.ParseDateTime(general.TrashInfoFileTimeFormat, deletionDate) // 文件的删除日期时间（已解析）
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to parse trashinfo file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			break
 		}
 
@@ -121,13 +121,13 @@ func RestoreFromTrash() {
 		for _, restoreThisFile := range restoreThisFiles {
 			if general.FileExist(restoreThisFile.OriginalPath) && !general.FileEmpty(restoreThisFile.OriginalPath) {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to restore files: %s file already exists and is not empty\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), restoreThisFile.OriginalPath)
+				color.Printf("%s %s Unable to restore files: '%s' already exists and is not empty\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), restoreThisFile.OriginalPath)
 				break
 			}
 			// 将回收站文件恢复到原路径
 			if err := os.Rename(restoreThisFile.Path, restoreThisFile.OriginalPath); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to restore files: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			}
 			// 删除其对应的 trashinfo 文件
 			general.DeleteFile(filepath.Join(general.TrashInfoPath, color.Sprintf("%s.trashinfo", filepath.Base(restoreThisFile.Path))))

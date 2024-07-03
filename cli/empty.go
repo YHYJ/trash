@@ -22,7 +22,7 @@ func EmptyTrash() {
 	trashFilesName, err := os.ReadDir(general.TrashFilePath)
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> Unable to read trash folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 
 	for _, trashFileName := range trashFilesName {
