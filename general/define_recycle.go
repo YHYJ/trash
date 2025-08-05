@@ -11,6 +11,7 @@ package general
 
 import (
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/gookit/color"
@@ -60,11 +61,9 @@ var fsTypes = StringSlice{ // 在此切片中的文件系统类型视为物理�
 //   - 存在返回 true，否则返回 false
 func (s StringSlice) Have(target string) bool {
 	// 遍历切片中的每个元素
-	for _, item := range s {
+	if slices.Contains(s, target) {
 		// 如果找到目标字符串，则返回 true
-		if item == target {
-			return true
-		}
+		return true
 	}
 	// 如果切片中不存在目标字符串，则返回 false
 	return false
